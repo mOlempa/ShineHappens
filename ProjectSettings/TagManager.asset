@@ -7,6 +7,8 @@ TagManager:
   - Knob
   - FxTemporaire
   - Client
+  - RunicTool
+  - KnobPanel
   layers:
   - Default
   - TransparentFX

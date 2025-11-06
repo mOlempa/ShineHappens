@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public PlayerCam playerCam;
 
     [SerializeField]
-    public GameUI gameUI;
+    public TimingMinigameUI timingMinigameUI;
 
 
     public int knobPoints = 0;
@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour
                     if (hit.transform.CompareTag("RunicTool"))
                     {
                         // Start timing minigame
-                        gameUI.ShowTimingBar();
+                        timingMinigameUI.ShowTimingPanel();
                     }
 
-                    if (hit.transform.CompareTag("Knob"))
+                    if (hit.transform.CompareTag("Knob") || hit.transform.CompareTag("KnobPanel"))
                     {
                         if (!lockPlayer)
                         {

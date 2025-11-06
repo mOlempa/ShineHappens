@@ -29,6 +29,11 @@ public class TimingMinigame : MonoBehaviour
 
     float deltaTime;
 
+    int points = 0;
+    int multiplier = 1;
+
+    int triesCounter = 0;
+
     GemAnimationScript gemAnimation;
 
     void Start()
@@ -52,6 +57,7 @@ public class TimingMinigame : MonoBehaviour
 
     void Update()
     {
+        // 4 times, the max points is 30
         if(Input.GetKeyDown(KeyCode.Space))
         {
             if (stop)
@@ -60,28 +66,56 @@ public class TimingMinigame : MonoBehaviour
             }
             else
             {
+                triesCounter++;
+                Color color = Color.white;
                 stop = true;
+                int newPoints = 0;
                 if(transform.position.y < greenLimits.max && transform.position.y > greenLimits.min)
                 {
-                    print("<color=lime>YOU WON :D</color>");
+                    newPoints = 2 * multiplier;
+                    points += newPoints;
+                    multiplier += multiplier;
+                    color = Color.green;
+
+                    //print("<color=lime>GREAT :D</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Stable);
                     GameManager.Instance.gemParticles.playGemExhale();
                 }
                 else if(transform.position.y < yellowLimits.max && transform.position.y > yellowLimits.min)
                 {
-                    print("<color=yellow>Good :)</color>");
+                    newPoints = 1 * multiplier;
+                    points += newPoints;
+                    multiplier += multiplier;
+                    color = new Color(255, 242, 0);
+
+                    //print("<color=#FFF200>Good :)</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Wavering);
                 }
                 else if (transform.position.y < orangeLimits.max && transform.position.y > orangeLimits.min)
                 {
-                    print("<color=orange>Well... At least you didn't loose</color>");
+                    //print("<color=orange>Well... Could be worse</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Disrupted);
                 }
                 else
                 {
-                    print("<color=red>You lost :(</color>");
+                    if(multiplier >= 2) 
+                        multiplier -= multiplier / 2;
+
+                    //print("<color=red>Ouch :(</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Unstable);
                     GameManager.Instance.gemParticles.playGemPuff();
+                }
+
+                if(newPoints != 0)
+                {
+                    GameManager.Instance.timingMinigameUI.setAddedPointsText(newPoints, color);
+                    GameManager.Instance.timingMinigameUI.setScoreText(points);
+                }
+                if(triesCounter == 4)
+                {
+                    GameManager.Instance.timingMinigameUI.HideTimingPanel();
+                    print($"<color=lime>You scored {points}/30</color>");
+                    resetMinigame();
                 }
             }
 
@@ -135,8 +169,13 @@ public class TimingMinigame : MonoBehaviour
             }
 
         }
-        //print("step = " + step);
-        //print("time.delatime = " + Time.deltaTime);
+    }
+
+    void resetMinigame()
+    {
+        points = 0;
+        multiplier = 1;
+        triesCounter = 0;
     }
 
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 // Script to add to any objects that cause the crosshair change
-public class Selectable : MonoBehaviour
+public class Interactable : MonoBehaviour
 {
     private void OnMouseEnter()
     {
