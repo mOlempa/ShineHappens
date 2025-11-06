@@ -15,11 +15,16 @@ public class PlayerCam : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Cursor.visible = true;
     }
 
     void Update()
     {
+        if (GameManager.Instance.lockPlayer)
+        {
+            return;
+        }
+
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
 
@@ -29,5 +34,17 @@ public class PlayerCam : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
+
+
+    public void ToggleLockCursor(bool lockPlayer)
+    {
+        if (lockPlayer)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 }

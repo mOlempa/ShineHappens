@@ -10,8 +10,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public GemParticles gemParticles;
 
+    [SerializeField]
+    public PlayerCam playerCam;
+
+    [SerializeField]
+    public GameUI gameUI;
+
 
     public int knobPoints = 0;
+    public bool lockPlayer = false;
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -56,18 +63,54 @@ public class GameManager : MonoBehaviour
             {
                 if (hit.collider != null)
                 {
-                    string name = hit.collider.gameObject.name;
+                    string name = hit.transform.name;
                     Debug.Log("Hit " + name);
 
-                    if (hit.collider.gameObject.CompareTag("Client"))
+                    if (hit.transform.CompareTag("Client"))
                     {
                         print("Client says hi.");
-                        hit.collider.gameObject.GetComponent<ClientInteract>().startInteraction();
+
+                        // Sth here with Gemini, idk
+                        // ...
+                        hit.transform.GetComponent<ClientInteract>().startInteraction();
+                        // ...
+                    }
+
+                    if (hit.transform.CompareTag("RunicTool"))
+                    {
+                        // Start timing minigame
+                        gameUI.ShowTimingBar();
+                    }
+
+                    if (hit.transform.CompareTag("Knob"))
+                    {
+                        if (!lockPlayer)
+                        {
+                            LockPlayer();
+                        }
                     }
                 }
             }
         }
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            UnlockPlayer();
+        }
     }
 
+
+    void LockPlayer()
+    {
+        lockPlayer = true;
+        CursorManager.Instance.HideCrosshair();
+        playerCam.ToggleLockCursor(true);
+    }
+
+    void UnlockPlayer()
+    {
+        lockPlayer = false;
+        CursorManager.Instance.ShowCrosshair();
+        playerCam.ToggleLockCursor(false);
+    }
 
 }

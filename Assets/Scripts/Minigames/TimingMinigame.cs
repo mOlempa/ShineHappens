@@ -10,7 +10,7 @@ struct Limits
     public float min;
 }
 
-public class MomentArrow : MonoBehaviour
+public class TimingMinigame : MonoBehaviour
 {
     [SerializeField]
     GameObject container, greenArea, yellowArea, redAreaBottom, redAreaTop, orangeArea;
@@ -46,12 +46,6 @@ public class MomentArrow : MonoBehaviour
         float orangeHeight = orangeArea.GetComponent<RectTransform>().rect.height;
         orangeLimits.max = transform.position.y + orangeHeight / 2;
         orangeLimits.min = transform.position.y - orangeHeight / 2;
-        /*float redTopHeight = redAreaTop.GetComponent<RectTransform>().rect.height;
-        redLimits.max = yLimits.max - redTopHeight / 2;
-        float redBottomHeight = redAreaTop.GetComponent<RectTransform>().rect.height;
-        redLimits.min = yLimits.min + redBottomHeight / 2;
-        print("Red max: " + redLimits.max);
-        print("Red min: " + redLimits.min);*/
 
         gemAnimation = GameManager.Instance.currentGem.GetComponent<GemAnimationScript>();
     }

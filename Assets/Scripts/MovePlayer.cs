@@ -25,12 +25,20 @@ public class MovePlayer : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.lockPlayer)
+        {
+            return;
+        }
         MyInput();
         SpeedControl();
     }
 
     private void FixedUpdate()
     {
+        if (GameManager.Instance.lockPlayer)
+        {
+            return;
+        }
         Move();
         rb.AddForce(Physics.gravity * rb.mass);
     }

@@ -9,6 +9,11 @@ public class MoveCamera : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.Instance.lockPlayer)
+        {
+            return;
+        }
+
         transform.position = camPos.position;
     }
 }

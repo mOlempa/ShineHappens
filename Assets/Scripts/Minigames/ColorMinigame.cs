@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FrequencyKnob : MonoBehaviour
+// Script for a color-adjusting minigame
+public class ColorMinigame : MonoBehaviour
 {
     [SerializeField]
     GameObject colorScreen;
@@ -132,30 +133,6 @@ public class FrequencyKnob : MonoBehaviour
         GameManager.Instance.knobPoints = points;
     }
 
-
-    /*void FixedUpdate()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log(Input.mousePosition);
-
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider != null)
-                {
-                    string name = hit.collider.gameObject.name;
-                    Debug.Log("Hit " + name);
-
-                    if (hit.collider.gameObject.CompareTag("Knob"))
-                    {
-                        rb.AddTorque(torque);
-                    }
-                }
-            }
-        }
-    }*/
 
 
 }
