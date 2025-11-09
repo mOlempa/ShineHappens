@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public TimingMinigameUI timingMinigameUI;
 
+    [SerializeField]
+    public GameObject clientInteractionPanel;
+
+    public Gem gemToMake;
 
     public int knobPoints = 0;
     public bool lockPlayer = false;
@@ -72,7 +76,8 @@ public class GameManager : MonoBehaviour
 
                         // Sth here with Gemini, idk
                         // ...
-                        hit.transform.GetComponent<ClientInteract>().startInteraction();
+                        clientInteractionPanel.SetActive(true);
+                        clientInteractionPanel.GetComponent<ClientInteraction>().InteractWithClient();
                         // ...
                     }
 

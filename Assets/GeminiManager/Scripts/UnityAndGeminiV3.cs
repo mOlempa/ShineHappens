@@ -92,10 +92,10 @@ public class UnityAndGeminiV3: MonoBehaviour
     
     private string apiKey = ""; 
     private string apiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"; // Edit it and choose your prefer model
-    private string imageEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent"; //End point for image generation
+    //private string imageEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent"; //End point for image generation
 
     [Header("ChatBot Function")]
-    public TMP_InputField inputField;
+    public TMP_Text inputField;
     public TMP_Text uiText;
     public string botInstructions;
     private TextContent[] chatHistory;
@@ -236,7 +236,9 @@ public class UnityAndGeminiV3: MonoBehaviour
             www.downloadHandler = new DownloadHandlerBuffer();
             www.SetRequestHeader("Content-Type", "application/json");
 
+            print("Sending web request...");
             yield return www.SendWebRequest();
+            print("Request sent.");
 
             if (www.result != UnityWebRequest.Result.Success) {
                 Debug.LogError(www.error);
@@ -268,7 +270,7 @@ public class UnityAndGeminiV3: MonoBehaviour
                     Debug.Log("No text found.");
                 }
              }
-        }  
+        }
     }
 
     // Image Generation is now a paid feature. The generation of images can produce charges at your credit card.

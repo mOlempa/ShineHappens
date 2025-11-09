@@ -33,6 +33,8 @@ public class GemAnimationScript : MonoBehaviour
                 break;
         }
 
+        playParticles(currentLevel, level);
+
         switch (level)
         {
             case GemStabilityLevel.Stable:
@@ -50,6 +52,37 @@ public class GemAnimationScript : MonoBehaviour
             case GemStabilityLevel.Unstable:
                 animator.SetBool("isUnstable", true);
                 currentLevel = GemStabilityLevel.Unstable;
+                break;
+        }
+    }
+
+    void playParticles(GemStabilityLevel previousState, GemStabilityLevel newState)
+    {
+        switch (newState)
+        {
+            case GemStabilityLevel.Stable:
+            case GemStabilityLevel.Wavering:
+                if (previousState == GemStabilityLevel.Unstable)
+                {
+                    GameManager.Instance.gemParticles.PlayGemSuddenStable();
+                }
+                else
+                {
+                    GameManager.Instance.gemParticles.PlayGemSlowStable();
+                }
+                break;
+            case GemStabilityLevel.Disrupted:
+                if(previousState == GemStabilityLevel.Unstable)
+                {
+                    GameManager.Instance.gemParticles.PlayGemSlowStable();
+                }
+                else
+                {
+                    GameManager.Instance.gemParticles.PlayGemDisrupted();
+                }
+                break;
+            case GemStabilityLevel.Unstable:
+                GameManager.Instance.gemParticles.PlayGemUnstable();
                 break;
         }
     }

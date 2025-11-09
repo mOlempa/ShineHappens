@@ -79,7 +79,7 @@ public class TimingMinigame : MonoBehaviour
 
                     //print("<color=lime>GREAT :D</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Stable);
-                    GameManager.Instance.gemParticles.playGemExhale();
+                    //GameManager.Instance.gemParticles.PlayGemSuddenStable();
                 }
                 else if(transform.position.y < yellowLimits.max && transform.position.y > yellowLimits.min)
                 {
@@ -103,7 +103,7 @@ public class TimingMinigame : MonoBehaviour
 
                     //print("<color=red>Ouch :(</color>");
                     gemAnimation.switchAnimation(GemStabilityLevel.Unstable);
-                    GameManager.Instance.gemParticles.playGemPuff();
+                    //GameManager.Instance.gemParticles.PlayGemSuddenStable();
                 }
 
                 if(newPoints != 0)

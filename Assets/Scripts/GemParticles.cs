@@ -1,34 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GemParticles : MonoBehaviour
 {
     [SerializeField]
-    ParticleSystem gemPuff;
+    ParticleSystem gemSlowStable;
 
     [SerializeField]
-    ParticleSystem gemExhale;
+    ParticleSystem gemSuddenStable;
 
-    public void playGemPuff()
+    [SerializeField]
+    ParticleSystem gemDisrupted;
+
+    [SerializeField]
+    ParticleSystem gemUnstable;
+
+    public void PlayGemSlowStable()
     {
-        gemPuff.Play();
+        gemSlowStable.Play();
+    }
+    public void PlayGemSuddenStable()
+    {
+        gemSuddenStable.Play();
+    }
+    public void PlayGemDisrupted()
+    {
+        gemDisrupted.Play();
+    }
+    public void PlayGemUnstable()
+    {
+        gemUnstable.Play();
     }
 
-    public void playGemExhale()
-    {
-        gemExhale.Play();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
