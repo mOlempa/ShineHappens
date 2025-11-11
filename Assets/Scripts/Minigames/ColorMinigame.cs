@@ -45,7 +45,7 @@ public class ColorMinigame : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log(Input.mousePosition);
+            //Debug.Log(Input.mousePosition);
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -54,7 +54,7 @@ public class ColorMinigame : MonoBehaviour
                 if (hit.collider != null)
                 {
                     string name = hit.collider.gameObject.name;
-                    Debug.Log("Hit " + name);
+                    //Debug.Log("Hit " + name);
 
                     if (hit.collider.gameObject.CompareTag("Knob"))
                     {

@@ -122,6 +122,9 @@ public class UnityAndGeminiV3: MonoBehaviour
         PNG = 4
     }
     public MediaType mimeType = MediaType.Video_MP4;
+
+    public bool connectionAttemptFin = false;
+    public bool connectionFailure = false;
     
 
     public string GetMimeTypeString()
@@ -195,6 +198,7 @@ public class UnityAndGeminiV3: MonoBehaviour
     public void SendChat()
     {
         string userMessage = inputField.text;
+        print("User message: " + userMessage);
         StartCoroutine( SendChatRequestToGemini(userMessage));
     }
 
@@ -242,8 +246,12 @@ public class UnityAndGeminiV3: MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success) {
                 Debug.LogError(www.error);
+                connectionAttemptFin = true;
+                connectionFailure = true;
             } else {
                 Debug.Log("Request complete!");
+                connectionAttemptFin = true;
+                connectionFailure = false;
                 TextResponse response = JsonUtility.FromJson<TextResponse>(www.downloadHandler.text);
                 if (response.candidates.Length > 0 && response.candidates[0].content.parts.Length > 0)
                     {
