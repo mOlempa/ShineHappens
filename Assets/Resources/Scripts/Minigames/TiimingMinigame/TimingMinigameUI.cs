@@ -47,7 +47,7 @@ public class TimingMinigameUI : MonoBehaviour
         addedPointsObject.SetActive(true);
         addedPointsText.color = color;
         addedPointsText.text = $"+" + addedPoints;
-        print("Playing animation");
+        //print("Playing animation");
         addedPointsAnimator.Play("Base Layer.AddedPoints");
         StartCoroutine(waitForAnimEnd(addedPointsAnimator));
     }
@@ -56,7 +56,7 @@ public class TimingMinigameUI : MonoBehaviour
     IEnumerator waitForAnimEnd(Animator animator)
     {
         AnimatorStateInfo stateInfo;
-        print("Waiting for animation to end...");
+        //print("Waiting for animation to end...");
         while (true)
         {
             yield return null;
@@ -67,7 +67,7 @@ public class TimingMinigameUI : MonoBehaviour
             }
         }
         addedPointsObject.SetActive(false);
-        print("Animation finished");
+        //print("Animation finished");
     }
 
 }

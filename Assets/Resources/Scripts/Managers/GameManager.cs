@@ -54,13 +54,17 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         knobPoints = 0;
-        EnablePlayerCamera();
+        clientInteractionPanel.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (lockPlayer)
+            {
+                return;
+            }
             //Debug.Log(Input.mousePosition);
 
             RaycastHit hit;
@@ -70,7 +74,7 @@ public class GameManager : MonoBehaviour
                 if (hit.collider != null)
                 {
                     string name = hit.transform.name;
-                    Debug.Log("Hit " + name + " (" + hit.transform.tag + ")");
+                    //Debug.Log("Hit " + name);
 
                     if (hit.transform.CompareTag("Client"))
                     {
@@ -78,7 +82,11 @@ public class GameManager : MonoBehaviour
 
                         // Sth here with Gemini, idk
                         // ...
-                        clientInteractionPanel.SetActive(true);
+                        if (!lockPlayer)
+                        {
+                            LockPlayer();
+                        }
+                        clientInteractionPanel.gameObject.SetActive(true);
                         clientInteractionPanel.GetComponent<ClientInteraction>().InteractWithClient();
                         // ...
                     }
@@ -122,14 +130,14 @@ public class GameManager : MonoBehaviour
         playerCam.GetComponent<Camera>().enabled = true;
     }
 
-    void LockPlayer()
+    public void LockPlayer()
     {
         lockPlayer = true;
         CursorManager.Instance.HideCrosshair();
         playerCam.ToggleLockCursor(true);
     }
 
-    void UnlockPlayer()
+    public void UnlockPlayer()
     {
         lockPlayer = false;
         CursorManager.Instance.ShowCrosshair();
