@@ -9,6 +9,7 @@ TagManager:
   - Client
   - RunicTool
   - KnobPanel
+  - StonecuttingStation
   layers:
   - Default
   - TransparentFX
