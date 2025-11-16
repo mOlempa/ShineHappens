@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using System.IO; 
 using System;
+using System.Net;
 
 [System.Serializable]
 public class UnityAndGeminiKey
@@ -202,9 +203,34 @@ public class UnityAndGeminiV3: MonoBehaviour
         StartCoroutine( SendChatRequestToGemini(userMessage));
     }
 
+    public void SendFakeChat(bool getResponse)
+    {
+        string userMessage = inputField.text;
+        print("User message: " + userMessage);
+        StartCoroutine(SendFakeChatRequest(userMessage, getResponse));
+    }
+
+    private IEnumerator SendFakeChatRequest(string newMessage, bool getResponse)
+    {
+        yield return new WaitForSeconds(2);
+        if (getResponse)
+        {
+            connectionAttemptFin = true;
+            connectionFailure = false;
+            print("<color=lime>Connection success</color>");
+            uiText.text = $"*Response to '{newMessage}' with instruction '{botInstructions}'*";
+        }
+        else
+        {
+            connectionAttemptFin = true;
+            connectionFailure = true;
+            print("<color=red>Connection failure</color>");
+        }
+    }
+
+
     private IEnumerator SendChatRequestToGemini(string newMessage)
     {
-
         string url = $"{apiEndpoint}?key={apiKey}";
      
         TextContent userContent = new TextContent
