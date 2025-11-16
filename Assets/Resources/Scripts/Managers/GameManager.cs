@@ -80,15 +80,17 @@ public class GameManager : MonoBehaviour
                     {
                         print("Client says hi.");
 
-                        // Sth here with Gemini, idk
-                        // ...
+                        if (clientInteractionPanel.gameObject.activeSelf)
+                        {
+                            return;
+                        }
+
                         if (!lockPlayer)
                         {
                             LockPlayer();
                         }
                         clientInteractionPanel.gameObject.SetActive(true);
                         clientInteractionPanel.GetComponent<ClientInteraction>().InteractWithClient();
-                        // ...
                     }
 
                     if (hit.transform.CompareTag("RunicTool"))
@@ -119,6 +121,10 @@ public class GameManager : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.Backspace))
         {
+            if (clientInteractionPanel.gameObject.activeSelf)
+            {
+                return;
+            }
             UnlockPlayer();
             EnablePlayerCamera();
         }

@@ -19,6 +19,10 @@ public class TimingMinigameUI : MonoBehaviour
     [SerializeField]
     GameObject timingMinigamePanel;
 
+    [SerializeField]
+    TextMeshProUGUI experienceText;
+    int expPoints = 0;
+
     private void Start()
     {
         addedPointsObject = addedPointsText.gameObject;
@@ -31,6 +35,7 @@ public class TimingMinigameUI : MonoBehaviour
     public void ShowTimingPanel()
     {
         timingMinigamePanel.SetActive(true);
+        scoreText.text = "0";
     }
     public void HideTimingPanel()
     {
@@ -47,6 +52,8 @@ public class TimingMinigameUI : MonoBehaviour
         addedPointsObject.SetActive(true);
         addedPointsText.color = color;
         addedPointsText.text = $"+" + addedPoints;
+        expPoints = expPoints + addedPoints;
+        experienceText.text = expPoints.ToString();
         //print("Playing animation");
         addedPointsAnimator.Play("Base Layer.AddedPoints");
         StartCoroutine(waitForAnimEnd(addedPointsAnimator));

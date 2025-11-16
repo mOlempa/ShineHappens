@@ -6,16 +6,17 @@ using UnityEngine;
 public class ColorMinigame : MonoBehaviour
 {
     [SerializeField]
+    GameObject machineRunes;
+
+    [SerializeField]
     GameObject colorScreen;
 
     [SerializeField]
     GameObject referenceColorScreen;
 
-    [SerializeField]
-    GameObject square;
-
     Material colorScreenMaterial;
     Material referenceColorScreenMaterial;
+    Material machineRunesMaterial;
 
     AudioSource audioSource;
 
@@ -32,6 +33,8 @@ public class ColorMinigame : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.pitch = 0.9f;
         colorScreenMaterial = colorScreen.GetComponent<Renderer>().material;
+        machineRunesMaterial = machineRunes.GetComponent<Renderer>().material;
+
         referenceColorScreenMaterial = referenceColorScreen.GetComponent<Renderer>().material;
 
         transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, previousAngle);
@@ -63,7 +66,6 @@ public class ColorMinigame : MonoBehaviour
 
                         // Get center position (on the screen) of the knob
                         centerPos = Camera.main.WorldToScreenPoint(transform.position);
-                        square.transform.position = centerPos;
                     }
                 }
             }
@@ -112,7 +114,11 @@ public class ColorMinigame : MonoBehaviour
 
     void SetFrequencyColor(float hue)
     {
-        colorScreenMaterial.SetColor("_Color", Color.HSVToRGB(hue, 1f, 1f));
+        Color c = Color.HSVToRGB(hue, 1f, 1f);
+        colorScreenMaterial.SetColor("_Color", c);
+        machineRunesMaterial.SetColor("_Color", c);
+        machineRunesMaterial.SetColor("_EmissionColor", c);
+        //machineRunesMaterial.EnableKeyword("_EMISSION");
     }
 
     float GetHue(Material material)

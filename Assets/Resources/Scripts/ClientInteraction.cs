@@ -18,17 +18,25 @@ public class ClientInteraction : MonoBehaviour
     UnityAndGeminiV3 gemini;
 
     [SerializeField]
+    Button responseButton1;
+    [SerializeField]
+    Button responseButton2;
+    [SerializeField]
+    Button responseButton3;
+
     TextMeshProUGUI responseButtonText1;
-    [SerializeField]
     TextMeshProUGUI responseButtonText2;
-    [SerializeField]
     TextMeshProUGUI responseButtonText3;
+
+    public bool fakingGeminiEnabled = true;
+    public bool getFakeResponse = true;
 
     int price = 50;
     float bargainedPercentage = 0.8f;
     bool nextLine = false;
     int replyNumber = 0;
-    public void runNextLine(int number) { nextLine = true; replyNumber = number; }
+
+    IEnumerator waitingTextAnimationCR;
 
     List<Character> predefinedCharacters = new List<Character>() {
         new Character("Goob", "elder man", Effect.PainReduction, 3, true),
@@ -36,43 +44,45 @@ public class ClientInteraction : MonoBehaviour
 
     Character currentCharacter;
 
+    private void Awake()
+    {
+        responseButtonText1 = responseButton1.transform.GetComponentInChildren<TextMeshProUGUI>();
+        responseButtonText2 = responseButton2.transform.GetComponentInChildren<TextMeshProUGUI>();
+        responseButtonText3 = responseButton3.transform.GetComponentInChildren<TextMeshProUGUI>();
+        ButtonsSetInteractable(false);
+    }
+
+    public void runNextLine(int number)
+    {
+        nextLine = true;
+        replyNumber = number;
+    }
 
     public void InteractWithClient()
     {
         //currentCharacter = GetRandom(predefinedCharacters);
         currentCharacter = new Character("Goob", "elder man", Effect.PainReduction, 3, true);
         StartCoroutine(clientInteractionCR());
-        //StartInteraction();
     }
-
-    void StartInteraction()
-    {
-        string botInstructions = $"You are a new client, a {currentCharacter.type} named {currentCharacter.name} visiting gem smith creating " +
-            $"magical amulets in their workshop. You want the gem smith to create you an amulet that has " +
-            $"{getStr(currentCharacter.wantedEffect)} as its magical property. ";
-
-        gemini.botInstructions = botInstructions;
-        playerText.text = "Welcome in, how may I help you?";
-        clientText.text = "Client says...";
-
-        print("Bot instructions: " + botInstructions);
-        // Try to connect to Gemini in at the start of the interaction
-        gemini.SendChat();
-        // Comment the line above and uncomment these two for always running default dialog
-        //gemini.connectionFailure = true;
-        //gemini.connectionAttemptFin = true;
-    }
-
 
     // Client interaction singular loop
     IEnumerator clientInteractionCR()
     {
         SetSameReply("...");
+
         // Do the start of the interaction
-        StartInteraction();
+        playerText.text = "Welcome in, how may I help you?";
+        clientText.text = "Client says...";
+
+        string botInstructions = $"You are a new client, a {currentCharacter.type} named {currentCharacter.name} visiting gem smith creating " +
+            $"magical amulets in their workshop. You want the gem smith to create you an amulet that has " +
+            $"{getStr(currentCharacter.wantedEffect)} as its magical property. ";
 
         // Wait for the connection attempt to end
-        yield return new WaitUntil(() => gemini.connectionAttemptFin);
+        yield return SendChatCR(botInstructions);
+
+        print("Connection attempt finished");
+
         // If couldn't connect to Gemini
         if (gemini.connectionFailure)
         {
@@ -81,107 +91,106 @@ public class ClientInteraction : MonoBehaviour
                 $"Could you craft me a gem that has an effect of {getStr(currentCharacter.wantedEffect)}?";
         }
 
-        // Wait for the player to press one of the given buttons
-        yield return new WaitUntil(() => nextLine);
+        SetSameReply("Continue");
 
-        nextLine = false;
+        // Wait for the player to press one of the given buttons
+        yield return WaitForButtonPress();
+        clientText.text = "Client says...";
         bool end = false;
 
         playerText.text = $"Sure thing! That will cost {price} coins.";
-        gemini.botInstructions = "";
 
         // If client is likely to argue on the pricing, give Gemini the instruction to do so
         if (currentCharacter.bargainingTimes > 0)
         {
-            gemini.botInstructions = $"Try to bargain the price down to {(bargainedPercentage * price).ToString()}.";
-            SetReplies(bargainReplies);
+            currentCharacter.bargainingTimes--;
+
+            // Send chat
+            yield return SendChatCR($"Try to bargain the price down to {(bargainedPercentage * price).ToString()}.");
+
             if (gemini.connectionFailure)
             {
                 clientText.text = $"I would like to pay {bargainedPercentage * price} instead.";
             }
+
+            SetReplies(bargainReplies);
         }
 
         int counter = 0;
 
-        // Bargaining loop (goes max. as many times as the character has bargainingTimes set)
         while (currentCharacter.bargainingTimes > 0)
         {
+            print("===================== NEW LOOP =====================");
             currentCharacter.bargainingTimes--;
             counter++;
 
-            // Send request for further interaction only if there was no connection failure before this point
-            if (!gemini.connectionFailure)
-            {
-                gemini.SendChat();
-                yield return new WaitUntil(() => gemini.connectionAttemptFin);
-
-                // If the connection was lost during the interaction
-                if (gemini.connectionFailure)
-                {
-                    clientText.text = "<color=red><size=30>ERROR: Gemini left the chat :(</color></size>\n\n" +
-                        "AAAH! I- MILK- I LEFT MILK ON THE STOVE!! Sorry, gotta go, bye!!\n";
-                    break;
-                }
-            }
-
             // Wait for the player to press one of the given buttons
-            yield return new WaitUntil(() => nextLine);
-            nextLine = false;
-            clientText.text = "";
-            gemini.botInstructions = "";
+            yield return WaitForButtonPress();
+            clientText.text = "Client says...";
+
 
             // Depending on what the player chose
             switch (replyNumber)
             {
                 case 0: // DISAGREEING
-                    playerText.text = "I cannot agree on that price.";
                     // If the character still has bargainingTimes > 0 after the -1 decrease
+                    playerText.text = "I cannot agree on that price.";
                     if (currentCharacter.bargainingTimes > 0)
                     {
+                        yield return SendChatCR("Insist on your proposition. ");
+
                         if (gemini.connectionFailure)
                         {
                             // Depending on which time it is that the character is insisting on lowering the price
                             clientText.text = counter == 1 ? "Please?" : "Pretty please?";
                         }
-                        gemini.botInstructions = "Insist on your proposition. ";
-
                     }
                     else
                     {
+                        yield return SendChatCR("Agree on the given price. Finish the interaction.");
+
                         if (gemini.connectionFailure)
                         {
                             clientText.text = $"Okay, fine :<\n";
                         }
-                        gemini.botInstructions = "Agree on the given price. ";
                         end = true;
                     }
                     break;
 
                 case 1: // COMPROMISING
-                    playerText.text = $"How about we meet halfway and set the price to {((bargainedPercentage * price + price)/2)}?";
                     // Instruct Gemini according to the character's likelyToCompromise value
+                    playerText.text = $"How about we meet halfway and set the price to {((bargainedPercentage * price + price) / 2)}?";
+
                     if (currentCharacter.likelyToCompromise)
                     {
+                        yield return SendChatCR("Agree on the compromise. Finish the interaction.");
+
                         if (gemini.connectionFailure)
                         {
-                            clientText.text = "Sure! :)\n";
+                            clientText.text = "Sure! :)\n Thank you!";
                         }
-                        gemini.botInstructions = "Agree on the compromise. ";
                         end = true;
                     }
                     else
                     {
+                        yield return SendChatCR("Insist on your proposition. ");
+
                         if (gemini.connectionFailure)
                         {
                             clientText.text = "Pretty please?";
                         }
-                        gemini.botInstructions = "Insist on your proposition. ";
                     }
                     break;
 
                 case 2: // AGREEING
-                    playerText.text = "Alright then.";
                     // End interaction
+                    playerText.text = "Alright then.";
+                    yield return SendChatCR("Finish the interaction.");
+
+                    if (gemini.connectionFailure)
+                    {
+                        clientText.text = "Yay!\nThank you!";
+                    }
                     end = true;
                     break;
             }
@@ -190,29 +199,51 @@ public class ClientInteraction : MonoBehaviour
             {
                 break;
             }
+
         }
 
-        // Set up a closing interaction
-        gemini.botInstructions += "Finish the interaction.";
-        if (gemini.connectionFailure)
-        {
-            clientText.text += "Thank you!";
-        }
-        else
-        {
-            gemini.SendChat();
-        }
         SetSameReply("Finish");
 
         // Wait for the player to press one of the given buttons
-        yield return new WaitUntil(() => nextLine);
-        nextLine = false;
+        yield return WaitForButtonPress();
 
         // Switch off the client interaction panel
         gameObject.SetActive(false);
         GameManager.Instance.UnlockPlayer();
     }
 
+    IEnumerator SendChatCR(string botInstructions)
+    {
+        gemini.botInstructions = botInstructions;
+        waitingTextAnimationCR = WaitingTextAnimation();
+        StartCoroutine(waitingTextAnimationCR);
+        if (fakingGeminiEnabled)
+        {
+            gemini.SendFakeChat(getFakeResponse);
+        }
+        else
+        {
+            gemini.SendChat();
+        }
+        yield return new WaitUntil(() => gemini.connectionAttemptFin);
+        StopCoroutine(waitingTextAnimationCR);
+        gemini.connectionAttemptFin = false;
+    }
+
+    IEnumerator WaitForButtonPress()
+    {
+        ButtonsSetInteractable(true);
+        yield return new WaitUntil(() => nextLine);
+        nextLine = false;
+        ButtonsSetInteractable(false);
+    }
+
+    void ButtonsSetInteractable(bool value)
+    {
+        responseButton1.interactable = value;
+        responseButton2.interactable = value;
+        responseButton3.interactable = value;
+    }
 
     // Setting replies on response buttons
     void SetReplies((string reply1, string reply2, string reply3) replies)
@@ -248,6 +279,26 @@ public class ClientInteraction : MonoBehaviour
             default:
                 return "healing";
         }
+    }
+
+    IEnumerator WaitingTextAnimation()
+    {
+        while (true)
+        {
+            if (!gemini.connectionAttemptFin)
+            {
+                clientText.text = "Client says";
+                for (int i = 0; i < 4; i++)
+                {
+                    yield return new WaitForSeconds(0.3f);
+                    if (!gemini.connectionAttemptFin)
+                    {
+                        clientText.text += ".";
+                    }
+                }
+            }
+        }
+
     }
 
 }
