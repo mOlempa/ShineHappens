@@ -46,6 +46,11 @@ public class ColorMinigame : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.lockPlayer)
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             //Debug.Log(Input.mousePosition);

@@ -29,7 +29,7 @@ public class MovePlayer : MonoBehaviour
         {
             return;
         }
-        MyInput();
+        GetInput();
         SpeedControl();
     }
 
@@ -43,7 +43,7 @@ public class MovePlayer : MonoBehaviour
         rb.AddForce(Physics.gravity * rb.mass);
     }
 
-    private void MyInput()
+    private void GetInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");

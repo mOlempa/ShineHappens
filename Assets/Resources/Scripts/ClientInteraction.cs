@@ -225,10 +225,12 @@ public class ClientInteraction : MonoBehaviour
         {
             gemini.SendChat();
         }
+
         yield return new WaitUntil(() => gemini.connectionAttemptFin);
         StopCoroutine(waitingTextAnimationCR);
         gemini.connectionAttemptFin = false;
     }
+
 
     IEnumerator WaitForButtonPress()
     {

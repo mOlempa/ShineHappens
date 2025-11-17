@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public GameObject clientInteractionPanel;
 
-    public Gem gemToMake;
-
     public int knobPoints = 0;
     public bool lockPlayer = false;
 
