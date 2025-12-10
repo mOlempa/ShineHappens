@@ -20,7 +20,7 @@ public class MovePlayer : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        rb.drag = moveDrag;
+        rb.linearDamping = moveDrag;
     }
 
     private void Update()
@@ -57,12 +57,12 @@ public class MovePlayer : MonoBehaviour
 
     private void SpeedControl()
     {
-        Vector3 vel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        Vector3 vel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         if (vel.magnitude > moveSpeed)
         {
             Vector3 limitedVel = vel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
         }
     }
 
